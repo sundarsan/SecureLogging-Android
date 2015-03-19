@@ -1,0 +1,48 @@
+1. Enable proguard for the project.
+
+2. Use a wrapper class to wrap the Android log. 
+
+public class LogWrapper {
+
+    public static final String TAG = "ApplicationTag";
+
+    public static void i(String string) {
+        android.util.Log.i(TAG, string);
+    }
+    public static void e(String string) {
+        android.util.Log.e(TAG, string);
+    }
+    public static void e(String string, Throwable t) {
+        android.util.Log.e(TAG, string, t);
+    }
+    public static void d(String string) {
+        android.util.Log.d(TAG, string);
+    }
+    public static void v(String string) {
+        android.util.Log.v(TAG, string);
+    }
+    public static void w(String string) {
+        android.util.Log.w(TAG, string);
+    }
+}
+
+3. In the application's code, use LogWrapper instead of the standard android.util.Log
+
+   LogWrap.i("Download intent received")
+
+4. Insert the following custom ProGuard configuration into the project's proguard-properties.txt file:
+
+	-assumenosideeffects class android.util.Log {
+		public static boolean isLoggable(java.lang.String, int);
+		public static int v(...);
+		public static int i(...);
+		public static int w(...);
+		public static int d(...);
+		public static int e(...);
+	}
+
+5. Enable ProGuard Optimize by adding the optimize configuration file to the project:
+
+proguard.config=${sdk.dir}/tools/proguard/proguard-android-optimize.txt:proguard-project.txt
+
+6. Build your application in release mode to apply ProGuard.
